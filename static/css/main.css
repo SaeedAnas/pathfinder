@@ -1,0 +1,130 @@
+.title {
+    font-size: 40px;
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 0px;
+}
+
+.description {
+    margin: 0 0 5px 0;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.search-form {
+    width: 50vw;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+.search-input {
+    border: 1px solid gray;
+    padding: 5px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+input {
+    border: none;
+    flex-grow: 1;
+}
+
+input:focus {
+    outline: none;
+}
+
+.autocomplete {
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 280px;
+}
+
+.autocomplete-item {
+    height: 20px;
+    padding: 0.25rem 0.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.autocomplete-item:hover, .selected {
+    background-color: #dcdcdc;
+}
+
+.active .search-input {
+    border-radius: 5px 5px 0 0;
+}
+
+.active .autocomplete {
+    display: block;
+    border: 1px solid gray;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+}
+
+.autocomplete::-webkit-scrollbar {
+    background-color: transparent
+}
+
+.autocomplete::-webkit-scrollbar-track {
+    border-radius: 100px;
+  }
+  
+  .autocomplete::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    background-color: #c1c1c1;
+  }
+
+  .autocomplete::-webkit-scrollbar-thumb:hover {
+    background-color: #7d7d7d;
+  }
+
+  /* -----
+SVG Icons - svgicons.sparkk.fr
+----- */
+
+.svg-icon {
+    padding: 2px;
+  }
+  
+  .svg-icon path,
+  .svg-icon polygon,
+  .svg-icon rect {
+    fill: gray;
+  }
+  
+  .svg-icon circle {
+    stroke: gray;
+    stroke-width: 1;
+    flex: none
+  }
+
+  .search-icon {
+    width: 1rem;
+    height: 1rem;
+    padding-right: 4px;
+  }
+
+  .cross-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+    display: none;
+  }
+
+  .active {
+    display: block;
+  }
+
+  .cross-icon:hover {
+    background-color: #c1c1c1;
+    cursor: pointer; 
+  }

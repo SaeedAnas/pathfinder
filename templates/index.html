@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <title>Pathfinder</title>
+  </head>
+  <body>
+    <div class="center">
+      <h1 class="title">Pathfinder</h1>
+      <div class="wrapper">
+      <p class="description">Predict how your future will look. Enter your occupation below.</p>
+        <div class="search-form">
+          <div class="search-input">
+            <svg class="svg-icon search-icon" viewBox="0 0 20 20">
+              <path
+                fill="none"
+                d="M19.129,18.164l-4.518-4.52c1.152-1.373,1.852-3.143,1.852-5.077c0-4.361-3.535-7.896-7.896-7.896
+                    c-4.361,0-7.896,3.535-7.896,7.896s3.535,7.896,7.896,7.896c1.934,0,3.705-0.698,5.078-1.853l4.52,4.519
+                    c0.266,0.268,0.699,0.268,0.965,0C19.396,18.863,19.396,18.431,19.129,18.164z M8.567,15.028c-3.568,0-6.461-2.893-6.461-6.461
+                    s2.893-6.461,6.461-6.461c3.568,0,6.46,2.893,6.46,6.461S12.135,15.028,8.567,15.028z"
+              ></path>
+            </svg>
+            <input type="text" placeholder="ex. Software Engineer" class="input-box" />
+            <svg class="svg-icon cross-icon" viewBox="0 0 20 20" onclick="clearInput()">
+                <path fill="none" d="M11.469,10l7.08-7.08c0.406-0.406,0.406-1.064,0-1.469c-0.406-0.406-1.063-0.406-1.469,0L10,8.53l-7.081-7.08
+                c-0.406-0.406-1.064-0.406-1.469,0c-0.406,0.406-0.406,1.063,0,1.469L8.531,10L1.45,17.081c-0.406,0.406-0.406,1.064,0,1.469
+                c0.203,0.203,0.469,0.304,0.735,0.304c0.266,0,0.531-0.101,0.735-0.304L10,11.469l7.08,7.081c0.203,0.203,0.469,0.304,0.735,0.304
+                c0.267,0,0.532-0.101,0.735-0.304c0.406-0.406,0.406-1.064,0-1.469L11.469,10z"></path>
+            </svg>
+          </div>
+          <div class="autocomplete"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      let suggestions = {{ suggestions|safe }}
+
+      const searchWrapper = document.querySelector(".search-form");
+      const inputBox = searchWrapper.querySelector(".input-box");
+      const suggestBox = searchWrapper.querySelector(".autocomplete");
+      const crossButton = searchWrapper.querySelector(".cross-icon")
+
+      let selected = null;
+
+      /**
+       * @param {String} HTML representing a single element
+       * @return {Element}
+       */
+      function html(html) {
+        var template = document.createElement("template");
+        html = html.trim(); // Never return a text node of whitespace as the result
+        template.innerHTML = html;
+        return template.content.firstChild;
+      }
+
+      function clearChildren() {
+        while (suggestBox.firstChild) {
+          suggestBox.removeChild(suggestBox.lastChild);
+        }
+      }
+
+      function clearInput() {
+        inputBox.value = ""
+        selected = null
+        clearChildren()
+        searchWrapper.classList.remove("active")
+        crossButton.classList.remove("active")
+      }
+
+      function showSuggestions(list) {
+        if (inputBox.value) {
+            crossButton.classList.add("active")
+        } else {
+            crossButton.classList.remove("active")
+        }
+        if (list.length > 0) {
+            list.forEach((item) => {
+                suggestBox.appendChild(item)
+            })
+            searchWrapper.classList.add("active")
+        } else {
+            searchWrapper.classList.remove("active")
+        }
+      }
+
+      function follow() {
+        let div = suggestBox.querySelector('.selected')
+        div.scrollIntoViewIfNeeded(false)
+      }
+
+      function selectDown() {
+        if (selected == null) {
+            selected = 0
+            suggestBox.children[selected].classList.add("selected")
+            follow()
+            return
+        }
+        let len = suggestBox.children.length
+        if (selected + 1 >= len) {
+            suggestBox.children[selected].classList.remove("selected")
+            selected = 0
+            suggestBox.children[selected].classList.add("selected")
+            follow()
+            return
+        }
+        suggestBox.children[selected].classList.remove("selected")
+        selected += 1
+        suggestBox.children[selected].classList.add("selected")
+        follow()
+      }
+
+      function selectUp() {
+        if (selected == null) {
+            selected = suggestBox.children.length - 1
+            suggestBox.children[selected].classList.add("selected")
+            follow()
+            return
+        }
+        if (selected - 1 < 0) {
+            suggestBox.children[selected].classList.remove("selected")
+            selected = suggestBox.children.length - 1
+            suggestBox.children[selected].classList.add("selected")
+            follow()
+            return
+        }
+        suggestBox.children[selected].classList.remove("selected")
+        selected -= 1
+        suggestBox.children[selected].classList.add("selected")
+        follow()
+      }
+
+      function complete(s) {
+        inputBox.value = s.textContent
+        submit(true)
+      }
+
+      function search(input) {
+        let lower = input.toLocaleLowerCase()
+
+        const bold = (s) => {
+            let i = s.toLocaleLowerCase().indexOf(lower)
+            let match = s.substring(i, i+lower.length)
+            s = s.replace(match, `<b>${match}</b>`)
+            return s
+        }
+
+        let match = []
+
+        if (input) {
+            match = suggestions.filter((s) => {
+                return s.toLocaleLowerCase().includes(lower)
+            }).map((s) => {
+                return html(`<div class="autocomplete-item" onclick="complete(this)">${bold(s)}</div>`)
+            })
+        }
+
+        return match
+      }
+
+      function submit(fromButton=false) {
+        if (selected !== null && !fromButton) {
+            inputBox.value = suggestBox.children[selected].textContent
+        }
+        console.log('done')
+        location.href = `api/${encodeURIComponent(inputBox.value)}`
+      }
+
+      inputBox.onkeyup = (e) => {
+
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+            return
+        }
+
+        let userInput = e.target.value
+
+        if (e.key === "Escape") {
+            console.log('here')
+            clearInput()
+            return
+        } else if (e.key === "Enter" && userInput) {
+            submit()
+            return
+        }
+
+        if (userInput.length === 0) {
+            clearInput()
+            return
+        }
+
+        let match = search(userInput)
+
+        clearChildren();
+        showSuggestions(match)
+      };
+
+      inputBox.onkeydown = (e) => {
+        let userInput = e.target.value
+
+        if (e.key === "ArrowUp" && userInput) {
+            selectUp()
+        } else if (e.key === "ArrowDown" && userInput) {
+            selectDown()
+        }
+      }
+    </script>
+  </body>
+</html>
