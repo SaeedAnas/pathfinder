@@ -32,4 +32,9 @@ def api(position):
     if current is None:
         abort(404)
 
-    return jsonify(next(current))
+    prediction = next(current)
+    current = pathways.pathways[current]
+
+    data = {"current": current.serialize(), "prediction": prediction}
+
+    return jsonify(data)

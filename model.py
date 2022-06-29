@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import util
 
 @dataclass
 class PositionEntry:
@@ -33,7 +34,7 @@ class Pathway:
     def serialize(self):
         d = {
             'position': self.position,
-            'avg_time': self.avg_time,
+            'avg_time': util.days_to_duration(self.avg_time),
             'count': self.count
         }
 

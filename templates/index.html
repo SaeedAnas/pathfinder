@@ -12,7 +12,10 @@
     <div class="center">
       <h1 class="title">Pathfinder</h1>
       <div class="wrapper">
-      <p class="description">Predict how your future will look. Enter your occupation below.</p>
+        <p class="description">
+          Predict how your future will look. Enter your occupation below.
+        </p>
+
         <div class="search-form">
           <div class="search-input">
             <svg class="svg-icon search-icon" viewBox="0 0 20 20">
@@ -24,27 +27,45 @@
                     s2.893-6.461,6.461-6.461c3.568,0,6.46,2.893,6.46,6.461S12.135,15.028,8.567,15.028z"
               ></path>
             </svg>
-            <input type="text" placeholder="ex. Software Engineer" class="input-box" />
-            <svg class="svg-icon cross-icon" viewBox="0 0 20 20" onclick="clearInput()">
-                <path fill="none" d="M11.469,10l7.08-7.08c0.406-0.406,0.406-1.064,0-1.469c-0.406-0.406-1.063-0.406-1.469,0L10,8.53l-7.081-7.08
+            <input
+              type="text"
+              placeholder="ex. Software Engineer"
+              class="input-box"
+            />
+            <svg
+              class="svg-icon cross-icon"
+              viewBox="0 0 20 20"
+              onclick="clearInput()"
+            >
+              <path
+                fill="none"
+                d="M11.469,10l7.08-7.08c0.406-0.406,0.406-1.064,0-1.469c-0.406-0.406-1.063-0.406-1.469,0L10,8.53l-7.081-7.08
                 c-0.406-0.406-1.064-0.406-1.469,0c-0.406,0.406-0.406,1.063,0,1.469L8.531,10L1.45,17.081c-0.406,0.406-0.406,1.064,0,1.469
                 c0.203,0.203,0.469,0.304,0.735,0.304c0.266,0,0.531-0.101,0.735-0.304L10,11.469l7.08,7.081c0.203,0.203,0.469,0.304,0.735,0.304
-                c0.267,0,0.532-0.101,0.735-0.304c0.406-0.406,0.406-1.064,0-1.469L11.469,10z"></path>
+                c0.267,0,0.532-0.101,0.735-0.304c0.406-0.406,0.406-1.064,0-1.469L11.469,10z"
+              ></path>
             </svg>
           </div>
           <div class="autocomplete"></div>
         </div>
       </div>
+
+    </div>
+    <div class="results">
     </div>
     <script>
       let suggestions = {{ suggestions|safe }}
 
-      const searchWrapper = document.querySelector(".search-form");
-      const inputBox = searchWrapper.querySelector(".input-box");
-      const suggestBox = searchWrapper.querySelector(".autocomplete");
+      const description = document.querySelector(".description")
+      const searchWrapper = document.querySelector(".search-form")
+      const searchInput = searchWrapper.querySelector(".search-input")
+      const inputBox = searchWrapper.querySelector(".input-box")
+      const suggestBox = searchWrapper.querySelector(".autocomplete")
       const crossButton = searchWrapper.querySelector(".cross-icon")
+      const results = document.querySelector('.results')
 
       let selected = null;
+      let error = false;
 
       /**
        * @param {String} HTML representing a single element
@@ -55,6 +76,12 @@
         html = html.trim(); // Never return a text node of whitespace as the result
         template.innerHTML = html;
         return template.content.firstChild;
+      }
+
+      function clearResults() {
+        while (results.firstChild) {
+            results.removeChild(results.lastChild)
+        }
       }
 
       function clearChildren() {
@@ -69,6 +96,7 @@
         clearChildren()
         searchWrapper.classList.remove("active")
         crossButton.classList.remove("active")
+        removeError()
       }
 
       function showSuggestions(list) {
@@ -161,15 +189,76 @@
         return match
       }
 
-      function submit(fromButton=false) {
+      async function submit(fromButton=false) {
         if (selected !== null && !fromButton) {
             inputBox.value = suggestBox.children[selected].textContent
         }
         console.log('done')
-        location.href = `api/${encodeURIComponent(inputBox.value)}`
+
+        if (!suggestions.includes(inputBox.value)) {
+            console.log('not found')
+            addError()
+            return
+        }
+        let res = await fetch(`api/${encodeURIComponent(inputBox.value)}`).catch(e => {
+            addError()
+            console.log(e)
+            return
+        })
+
+        let data = await res.json()
+        renderResults(inputBox.value, data)
       }
 
-      inputBox.onkeyup = (e) => {
+      function renderResults(title, data) {
+        clearInput()
+        clearResults()
+        console.log(title)
+        console.log(data)
+        console.log(results)
+        results.appendChild(createCard(0, data.current))
+        if (data.prediction.length > 0) {
+            let index = 1
+            for (p of data.prediction) {
+                results.appendChild(createCard(index, p))
+                index++
+            }
+        } else {
+            results.appendChild(html(`<p>Venture through unexplored territory.</p>`))
+        }
+      }
+
+      function createCard(index, data) {
+        let others = (data.count === 1) ? `Only ${data.count} person followed this path` : `${data.count} others followed this path`
+        return html(
+            `<div class="result-item">
+                <div>${index}:</div>
+                <div>${data.position}</div>
+                <div>For: ${data.avg_time}</div>
+                <div>${others}</div>
+            </div>`
+        )
+      }
+
+
+
+      function addError() {
+        if (!error) {
+            description.after(html(`<p class="error-message">Error! Occupation not found in database.</p>`))
+            searchInput.classList.add('error')
+            error = true
+        }
+      }
+
+      function removeError() {
+        if (error) {
+            document.querySelector('.error-message').remove()
+            searchInput.classList.remove('error')
+            error = false
+        }
+      }
+
+      inputBox.onkeyup = async (e) => {
 
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
             return
@@ -178,11 +267,10 @@
         let userInput = e.target.value
 
         if (e.key === "Escape") {
-            console.log('here')
             clearInput()
             return
         } else if (e.key === "Enter" && userInput) {
-            submit()
+            await submit()
             return
         }
 
@@ -194,6 +282,7 @@
         let match = search(userInput)
 
         clearChildren();
+        removeError()
         showSuggestions(match)
       };
 

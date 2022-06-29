@@ -13,6 +13,10 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+    top: 0;
 }
 .search-form {
     width: 50vw;
@@ -52,6 +56,7 @@ input:focus {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow-x: hidden;
+    background-color: white;
 }
 
 .autocomplete-item:hover, .selected {
@@ -127,4 +132,30 @@ SVG Icons - svgicons.sparkk.fr
   .cross-icon:hover {
     background-color: #c1c1c1;
     cursor: pointer; 
+  }
+
+  .error {
+    border: 1px solid red;
+  }
+
+  .error .search-icon {
+    fill: red;
+  }
+
+  .error-message {
+    color: red;
+    margin: 0;
+    padding: 0;
+  }
+
+  .results {
+    position: absolute;
+    z-index: -1;
+    margin-top: 150px;
+  }
+
+  @media only screen and (max-width: 700px) {
+    .search-form {
+      width: 80vw;
+    }
   }
