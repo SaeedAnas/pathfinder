@@ -26,7 +26,6 @@ def index():
 
 @app.route("/api/<path:position>/")
 def api(position):
-    print(position)
     current = pathways.get(position)
 
     if current is None:
