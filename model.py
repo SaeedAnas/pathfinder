@@ -32,6 +32,7 @@ class Pathway:
        return f"[Position: '{self.position}', Avg Time: '{self.avg_time}', Count: '{self.count}', Next: '{self.next}']" 
 
     def serialize(self):
+        print(self.avg_time)
         d = {
             'position': self.position,
             'avg_time': util.days_to_duration(self.avg_time),

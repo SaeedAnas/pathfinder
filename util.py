@@ -30,12 +30,15 @@ def days_to_duration(number_of_days):
 
     result = []
 
+    if years < 1 and months < 1 and days < 1:
+        return 'No days'
+
     if years > 0:
-        result.append(f'{int(years)} years')
+        result.append(f'{int(years)} year{"" if years == 1 else "s"}')
     if months > 0:
-        result.append(f'{int(months)} months')
+        result.append(f'{int(months)} month{"" if months == 1 else "s"}')
     if days > 0:
-        result.append(f'{int(days)} days')
+        result.append(f'{int(days)} day{"" if days == 1 else "s"}')
 
     return ', '.join(result)
 
