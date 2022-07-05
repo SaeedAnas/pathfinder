@@ -1,4 +1,5 @@
-from flask import Flask, abort, render_template, jsonify
+from crypt import methods
+from flask import Flask, abort, render_template, jsonify, request
 from db import fetch_pathways
 
 app = Flask(__name__)

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import json
 import util
 
 @dataclass
@@ -7,6 +8,7 @@ class PositionEntry:
     position: str
     days: int
 
+@dataclass
 class Pathway:
     position: str
     avg_time: float
@@ -39,7 +41,6 @@ class Pathway:
         }
 
         return d
-
 
 class Pathways:
     pathways: dict
