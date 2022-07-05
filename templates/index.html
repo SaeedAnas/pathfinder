@@ -198,7 +198,9 @@
             addError()
             return
         }
-        let res = await fetch(`api/${encodeURIComponent(inputBox.value)}`).catch(e => {
+
+        let val = inputBox.value.replaceAll(' ', '_')
+        let res = await fetch(`api/${encodeURIComponent(val)}`).catch(e => {
             addError()
             console.log(e)
             return
