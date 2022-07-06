@@ -27,6 +27,7 @@ def index():
 
 @app.route("/api/<path:position>/")
 def api(position):
+
     position = position.replace('_', ' ')
     current = pathways.get(position)
 

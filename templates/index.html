@@ -191,20 +191,20 @@
         if (selected !== null && !fromButton) {
             inputBox.value = suggestBox.children[selected].textContent
         }
-        console.log('done')
 
-        if (!suggestions.includes(inputBox.value)) {
-            console.log('not found')
-            addError()
-            return
-        }
+        // if (!suggestions.includes(inputBox.value)) {
+        //     console.log('not found')
+        //     addError()
+        //     return
+        // }
 
         let val = inputBox.value.replaceAll(' ', '_')
-        let res = await fetch(`api/${encodeURIComponent(val)}`).catch(e => {
-            addError()
-            console.log(e)
-            return
-        })
+        let res = await fetch(`api/${encodeURIComponent(val)}`)
+
+        if (res.status === 404) {
+          addError()
+          return
+        }
 
         let data = await res.json()
         renderResults(inputBox.value, data)
@@ -213,9 +213,6 @@
       function renderResults(title, data) {
         clearInput()
         clearResults()
-        console.log(title)
-        console.log(data)
-        console.log(results)
         results.appendChild(createCard(0, data.current))
         if (data.prediction.length > 0) {
             let index = 1
