@@ -4,7 +4,7 @@ import util
 import shelve
 
 filename = 'user_position.csv'
-cache = 'cache'
+cache = 'cache.db'
 schema = ['id','position','start','end']
 
 def read_csv(filename, schema) -> pd.DataFrame:
@@ -81,7 +81,7 @@ def cache_pathways(pathways):
     d['pathways'] = pathways
 
 def fetch_cache():
-    d = shelve.open(cache)
+    d = shelve.open(cache, flag='r')
 
     if 'pathways' in d:
         return d['pathways']
