@@ -51,7 +51,7 @@ def generate_pathways(users) -> dict:
 
             next = index + 1
 
-            if next < length:
+            if next < length and entry.position is not user[next].position:
                 pathways[entry.position].add_path(user[next].position)
 
     for pathway in pathways.values():

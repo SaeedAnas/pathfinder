@@ -225,16 +225,15 @@
             }
         } else {
             let d = {
-                position: "Retirement",
-                avg_time: "Life",
-                count: "Many",
+                position: "A new path",
+                avg_time: "Unknown",
+                count: "No one",
             }
             results.appendChild(createCard(1, d))
         }
       }
 
       function createCard(index, data, only=false) {
-        let others = (data.count === 1) ? `Only ${data.count} person followed this path` : `${data.count} others followed this path`
         return html(
             `<div class="result-item ${only ? '' : 'timeline'}">
                 <div class="index">
@@ -243,7 +242,7 @@
                 <div class="result-info">
                     <div class="info">title:   <span class="position">${data.position}</span></div>
                     <div class="info">for:     <span class="time">${data.avg_time}</span></div>
-                    <div class="info">similar: <span class="similar">${data.count} ${(data.count === 1) ? 'person' : 'people'}</span></div>
+                    <div class="info">similar: <span class="similar">${data.count}</span></div>
                 </div
             </div>`
         )

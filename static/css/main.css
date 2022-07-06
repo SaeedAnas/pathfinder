@@ -157,14 +157,14 @@ SVG Icons - svgicons.sparkk.fr
 }
 
 .results {
-  position: absolute;
+  position: relative;
   z-index: -1;
   display: flex;
   justify-content: center;
   flex-direction: column;
   width: 80vw;
+  margin-left: calc(50vw - 245px);
   margin-top: 150px;
-  margin-left: 20vw;
 }
 
 .result-item {
@@ -175,14 +175,14 @@ SVG Icons - svgicons.sparkk.fr
 }
 
 .timeline {
-  border-left: 2px solid;
+  border-left: 2px solid #dee2e6;
 }
 
 .timeline:first-child {
-  border-image: linear-gradient(to bottom, transparent 50%, black 50%) 1;
+  border-image: linear-gradient(to bottom, transparent 50%, #dee2e6 50%) 1;
 }
 .timeline:last-child {
-  border-image: linear-gradient(to bottom, black 50%, transparent 50%) 1;
+  border-image: linear-gradient(to bottom, #dee2e6 50%, transparent 50%) 1;
 }
 
 .result-info {
@@ -190,13 +190,15 @@ SVG Icons - svgicons.sparkk.fr
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   padding: 10px;
   margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #dee2e6
 }
 
 .index {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background-color: silver;
+  background-color: #dee2e6;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -207,7 +209,7 @@ SVG Icons - svgicons.sparkk.fr
 
 .info {
   font-size: 12px;
-  color: #7d7d7d;
+  color: #868e96;
 }
 
 .position {
@@ -217,15 +219,15 @@ SVG Icons - svgicons.sparkk.fr
 
 .time {
   font-size: 14px;
-  color: limegreen;
+  color: #1c7ed6;
 }
 
 .similar {
   font-size: 14px;
-  color: lightcoral;
+  color: #1c7ed6;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 500px) {
   .search-form {
     /* width: 80vw; */
   }

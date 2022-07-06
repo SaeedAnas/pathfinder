@@ -37,7 +37,7 @@ class Pathway:
         d = {
             'position': self.position,
             'avg_time': util.days_to_duration(self.avg_time),
-            'count': self.count
+            'count': util.count_to_string(self.count)
         }
 
         return d

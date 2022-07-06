@@ -42,3 +42,5 @@ def days_to_duration(number_of_days):
 
     return ', '.join(result)
 
+def count_to_string(count):
+    return f"{count} {'person' if count == 1 else 'people'}"
