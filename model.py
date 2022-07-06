@@ -73,4 +73,3 @@ class Pathways:
                 max = pathway
 
         return max
-

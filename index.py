@@ -1,9 +1,9 @@
-from crypt import methods
 from flask import Flask, abort, render_template, jsonify, request
-from db import fetch_pathways
+from db import fetch_cache, add_to_csv
+import util
 
 app = Flask(__name__)
-pathways = fetch_pathways()
+pathways = fetch_cache()
 suggestions = pathways.get_positions()
 
 def next(position, count=2):
@@ -39,3 +39,32 @@ def api(position):
     data = {"current": current.serialize(), "prediction": prediction}
 
     return jsonify(data)
+
+@app.route("/save", methods=["POST"])
+def save():
+    data = request.get_json()
+
+    id = data['id']
+    position = data['position']
+    start = data['start']
+    end = data['end']
+
+    if None in (id , position, start, end):
+        abort(400)
+
+    if type(id) is int:
+        id = str(id)
+    else:
+        id = id if id.isdigit() else None
+
+    start = start if util.is_date(start) else None
+    end = end if util.is_date(end) or end == "" else None
+
+    if None in (id , position, start, end):
+        abort(400)
+    
+    entry = [id, position, start, end]
+
+    add_to_csv(','.join(entry))
+
+    return jsonify({"status": "success"})

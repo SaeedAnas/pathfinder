@@ -13,6 +13,13 @@ def parse_date(date):
 
     return datetime.strptime(date, format)
 
+def is_date(date):
+    try:
+        datetime.strptime(date, format)
+        return True
+    except ValueError:
+        return False
+
 def time_between(start, end):
     start = parse_date(start)
     end = parse_date(end)

@@ -1,8 +1,10 @@
 import pandas as pd
 from model import Pathways, PositionEntry, Pathway
 import util
+import shelve
 
 filename = 'user_position.csv'
+cache = 'cache'
 schema = ['id','position','start','end']
 
 def read_csv(filename, schema) -> pd.DataFrame:
@@ -10,6 +12,12 @@ def read_csv(filename, schema) -> pd.DataFrame:
     df.columns = schema
 
     return df
+
+def add_to_csv(data, filename=filename):
+    with open(filename, 'a') as f:
+        f.write('\n')
+        f.write(data)
+    fetch_pathways()
 
 def parse_row(row) -> PositionEntry:
     start = row['start']
@@ -57,11 +65,25 @@ def generate_pathways(users) -> dict:
     for pathway in pathways.values():
         pathway.update_avg()
 
-    return pathways
+    return Pathways(pathways)
 
 def fetch_pathways() -> Pathways:
     db = parse_db(read_csv(filename, schema))
     users = to_users(db)
     pathways = generate_pathways(users)
+    cache_pathways(pathways)
 
-    return Pathways(pathways)
+    return pathways
+
+def cache_pathways(pathways):
+    d = shelve.open(cache)
+
+    d['pathways'] = pathways
+
+def fetch_cache():
+    d = shelve.open(cache)
+
+    if 'pathways' in d:
+        return d['pathways']
+
+    return fetch_pathways()
